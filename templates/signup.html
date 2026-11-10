@@ -1,0 +1,243 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Registration</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f4f8;
+            margin: 0;
+            padding: 30px 15px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px #00000015;
+        }
+
+        h2 {
+            color: #243b64;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-top: 25px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #243b64;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 11px;
+            margin-top: 6px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 25px;
+            background: #243b64;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #172b4d;
+        }
+
+        #message {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .success {
+            background: #e3f5e8;
+            color: #17652c;
+        }
+
+        .error {
+            background: #fde8e8;
+            color: #a32121;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>College Registration</h1>
+
+    <form id="signupForm">
+
+        <h2>College Details</h2>
+
+        <label>College Name *</label>
+        <input type="text" name="college_name" required>
+
+        <label>College Code</label>
+        <input type="text" name="college_code">
+
+        <label>AISHE Code</label>
+        <input type="text" name="college_aishe_code">
+
+        <label>College Address</label>
+        <textarea name="college_address"></textarea>
+
+        <label>City</label>
+        <input type="text" name="college_city">
+
+        <label>District</label>
+        <input type="text" name="college_district">
+
+        <label>State</label>
+        <input type="text" name="college_state">
+
+        <label>Pincode</label>
+        <input type="text" name="college_pincode">
+
+        <label>College Email</label>
+        <input type="email" name="college_email">
+
+        <label>College Phone</label>
+        <input type="text" name="college_phone">
+
+        <h2>College Administrator Details</h2>
+
+        <label>Full Name *</label>
+        <input type="text" name="full_name" required>
+
+        <label>Username *</label>
+        <input type="text" name="username" required>
+
+        <label>Admin Email *</label>
+        <input type="email" name="admin_email" required>
+
+        <label>Password *</label>
+        <input type="password" name="password" required>
+
+        <label>Mobile Number</label>
+        <input type="text" name="mobile_number">
+
+        <button type="submit" id="submitButton">
+            Register College
+        </button>
+
+    </form>
+
+    <div id="message"></div>
+
+</div>
+
+<script>
+    const signupForm = document.getElementById("signupForm");
+    const messageBox = document.getElementById("message");
+    const submitButton = document.getElementById("submitButton");
+
+    signupForm.addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        const formData = new FormData(signupForm);
+
+        const data = Object.fromEntries(formData.entries());
+
+        // Convert empty optional fields to null
+        const optionalFields = [
+            "college_code",
+            "college_aishe_code",
+            "college_address",
+            "college_city",
+            "college_district",
+            "college_state",
+            "college_pincode",
+            "college_email",
+            "college_phone",
+            "mobile_number"
+        ];
+
+        optionalFields.forEach(function(field) {
+            if (data[field].trim() === "") {
+                data[field] = null;
+            }
+        });
+
+        submitButton.disabled = true;
+        submitButton.textContent = "Submitting...";
+
+        messageBox.style.display = "none";
+
+        try {
+
+            const response = await fetch("/college/signup", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            messageBox.style.display = "block";
+
+            if (response.ok) {
+
+                messageBox.className = "success";
+
+                messageBox.innerHTML =
+                    result.message +
+                    "<br><br>College ID: " + result.college_id +
+                    "<br>Registration Status: " + result.registration_status;
+
+                signupForm.reset();
+
+            } else {
+
+                messageBox.className = "error";
+
+                messageBox.textContent =
+                    result.message || result.error || "Registration failed.";
+
+            }
+
+        } catch (error) {
+
+            messageBox.style.display = "block";
+            messageBox.className = "error";
+            messageBox.textContent =
+                "Unable to connect to the server. Please try again.";
+
+        }
+
+        submitButton.disabled = false;
+        submitButton.textContent = "Register College";
+
+    });
+</script>
+
+</body>
+</html>

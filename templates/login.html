@@ -1,0 +1,149 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Admin Login</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .login-container {
+            background: white;
+            padding: 35px;
+            width: 350px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #243b55;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            background: #243b55;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #365779;
+        }
+
+        #message {
+            text-align: center;
+            margin-top: 15px;
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="login-container">
+
+    <h2>College Admin Login</h2>
+
+    <form id="loginForm">
+
+        <input
+            type="text"
+            id="username"
+            placeholder="Enter Username"
+            required
+        >
+
+        <input
+            type="password"
+            id="password"
+            placeholder="Enter Password"
+            required
+        >
+
+        <button type="submit">Login</button>
+
+    </form>
+
+    <p id="message"></p>
+
+</div>
+
+<script>
+
+    document.getElementById('loginForm').addEventListener('submit', async function(event) {
+
+        event.preventDefault();
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        const message = document.getElementById('message');
+
+        try {
+
+            const response = await fetch('/college-admin/login', {
+                method: 'POST',
+
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+
+                message.style.color = 'green';
+                message.textContent = result.message;
+
+                window.location.href = '/college-admin/dashboard';
+
+            } else {
+
+                message.style.color = 'red';
+                message.textContent = result.message || 'Login failed.';
+
+            }
+
+        } catch (error) {
+
+            message.style.color = 'red';
+            message.textContent = 'Unable to connect to the server.';
+
+        }
+
+    });
+
+</script>
+
+</body>
+</html>

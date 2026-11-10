@@ -1,0 +1,456 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin Dashboard</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f2f4f8;
+            color: #263449;
+        }
+
+        header {
+            background: #243b64;
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 23px;
+        }
+
+        .logout-button {
+            background: #d9534f;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 22px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px #00000010;
+            margin-bottom: 25px;
+        }
+
+        .summary-card h3 {
+            margin: 0 0 10px;
+            color: #667085;
+        }
+
+        .summary-card p {
+            margin: 0;
+            font-size: 30px;
+            font-weight: bold;
+            color: #243b64;
+        }
+
+        .section-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .refresh-button {
+            background: #243b64;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .college-card {
+            background: white;
+            padding: 22px;
+            margin: 18px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px #00000010;
+        }
+
+        .college-card h3 {
+            margin-top: 0;
+            color: #243b64;
+        }
+
+        .details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+            margin: 18px 0;
+        }
+
+        .detail {
+            background: #f7f8fa;
+            padding: 12px;
+            border-radius: 5px;
+            overflow-wrap: anywhere;
+        }
+
+        .detail strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #667085;
+            font-size: 13px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .approve-button, .reject-button {
+            border: none;
+            padding: 11px 20px;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .approve-button {
+            background: #198754;
+        }
+
+        .reject-button {
+            background: #dc3545;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        #message {
+            display: none;
+            padding: 13px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .success {
+            display: block !important;
+            background: #e3f5e8;
+            color: #17652c;
+        }
+
+        .error {
+            display: block !important;
+            background: #fde8e8;
+            color: #a32121;
+        }
+
+        .empty-message {
+            background: white;
+            padding: 25px;
+            text-align: center;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Super Admin Dashboard</h1>
+    <button class="logout-button" onclick="logout()">Logout</button>
+</header>
+
+<div class="container">
+
+    <div class="summary-card">
+        <h3>Pending Colleges</h3>
+        <p id="totalPending">0</p>
+    </div>
+
+    <div class="summary-card">
+        <h3>Approved Colleges</h3>
+        <p id="totalApproved">0</p>
+    </div>
+
+    <div class="summary-card">
+        <h3>Rejected Colleges</h3>
+        <p id="totalRejected">0</p>
+    </div>
+
+    <div class="section-heading">
+        <h2>Pending College Approvals</h2>
+        <button class="refresh-button" onclick="loadColleges()">
+            Refresh
+        </button>
+    </div>
+
+    <div id="message"></div>
+
+        <h2>Pending College Approvals</h2>
+    <div id="collegeList">
+        <p>Loading...</p>
+    </div>
+
+    <hr>
+
+    <h2>Approved Colleges</h2>
+    <div id="approvedCollegeList">
+        <p>Loading...</p>
+    </div>
+
+    <hr>
+
+    <h2>Rejected Colleges</h2>
+    <div id="rejectedCollegeList">
+        <p>Loading...</p>
+    </div>
+
+</div>
+
+<script>
+
+const messageBox = document.getElementById("message");
+
+function showMessage(message, type) {
+    messageBox.textContent = message;
+    messageBox.className = type;
+}
+
+async function loadColleges(status, listId, countId) {
+
+    const collegeList = document.getElementById(listId);
+    const countElement = document.getElementById(countId);
+
+    collegeList.innerHTML = "<p>Loading...</p>";
+
+    try {
+
+        const response = await fetch(
+            "/super-admin/colleges/by-status/" + status
+        );
+
+        const result = await response.json();
+
+        if (response.status === 401) {
+            window.location.href = "/super-admin/login-page";
+            return;
+        }
+
+        if (!response.ok) {
+            throw new Error(result.message || result.error || "Unable to load colleges.");
+        }
+
+        countElement.textContent = result.total_colleges;
+
+        collegeList.innerHTML = "";
+
+        if (result.colleges.length === 0) {
+            collegeList.innerHTML = `
+                <div class="empty-message">
+                    <p>No ${status.toLowerCase()} colleges found.</p>
+                </div>
+            `;
+            return;
+        }
+
+        result.colleges.forEach(function(college) {
+
+            const card = document.createElement("div");
+            card.className = "college-card";
+
+            const title = document.createElement("h3");
+            title.textContent = college.college_name || "Unnamed College";
+            card.appendChild(title);
+
+            const details = document.createElement("div");
+            details.className = "details";
+
+            const fields = [
+                ["College ID", college.college_id],
+                ["College Code", college.college_code],
+                ["AISHE Code", college.college_aishe_code],
+                ["Email", college.college_email],
+                ["Phone", college.college_phone],
+                ["City", college.college_city],
+                ["District", college.college_district],
+                ["State", college.college_state],
+                ["Registration Date", college.created_at],
+                ["Registration Status", college.registration_status],
+                ["College Status", college.college_status]
+            ];
+
+            fields.forEach(function(field) {
+
+                const detail = document.createElement("div");
+                detail.className = "detail";
+
+                const label = document.createElement("strong");
+                label.textContent = field[0];
+
+                const value = document.createElement("span");
+                value.textContent = field[1] ?? "Not provided";
+
+                detail.appendChild(label);
+                detail.appendChild(value);
+                details.appendChild(detail);
+
+            });
+
+            card.appendChild(details);
+
+            // Only pending colleges can be approved or rejected
+            if (status === "Pending") {
+
+                const actions = document.createElement("div");
+                actions.className = "actions";
+
+                const approveButton = document.createElement("button");
+                approveButton.className = "approve-button";
+                approveButton.textContent = "Approve";
+
+                approveButton.onclick = function() {
+                    processCollege(college.college_id, "approve");
+                };
+
+                const rejectButton = document.createElement("button");
+                rejectButton.className = "reject-button";
+                rejectButton.textContent = "Reject";
+
+                rejectButton.onclick = function() {
+                    processCollege(college.college_id, "reject");
+                };
+
+                actions.appendChild(approveButton);
+                actions.appendChild(rejectButton);
+
+                card.appendChild(actions);
+            }
+
+            collegeList.appendChild(card);
+
+        });
+
+    } catch (error) {
+
+        collegeList.innerHTML = "";
+        collegeList.textContent = error.message;
+
+    }
+}
+
+
+async function loadDashboard() {
+
+    await Promise.all([
+        loadColleges("Pending", "collegeList", "totalPending"),
+        loadColleges("Approved", "approvedCollegeList", "totalApproved"),
+        loadColleges("Rejected", "rejectedCollegeList", "totalRejected")
+    ]);
+
+}
+
+
+async function processCollege(collegeId, action) {
+
+    const actionName = action === "approve" ? "approve" : "reject";
+
+    const confirmed = confirm(
+        "Are you sure you want to " + actionName + " this college?"
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            "/super-admin/colleges/" +
+            encodeURIComponent(collegeId) +
+            "/" + action,
+            {
+                method: "PUT"
+            }
+        );
+
+        const result = await response.json();
+
+        if (response.status === 401) {
+            window.location.href = "/super-admin/login-page";
+            return;
+        }
+
+        if (!response.ok) {
+            throw new Error(result.message || result.error || "Action failed.");
+        }
+
+        showMessage(result.message, "success");
+
+        // Refresh all three sections
+        await loadDashboard();
+
+    } catch (error) {
+
+        showMessage(error.message, "error");
+
+    }
+}
+
+
+async function logout() {
+
+    const confirmed = confirm("Are you sure you want to logout?");
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch("/super-admin/logout", {
+            method: "POST"
+        });
+
+        if (response.ok) {
+            window.location.href = "/super-admin/login-page";
+        } else {
+            showMessage("Unable to logout. Please try again.", "error");
+        }
+
+    } catch (error) {
+
+        showMessage("Unable to connect to the server.", "error");
+
+    }
+}
+
+
+// Load all college categories when dashboard opens
+loadDashboard();
+
+</script>
+
+</body>
+</html>

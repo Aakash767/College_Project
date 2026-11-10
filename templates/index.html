@@ -1,0 +1,399 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduNetwork</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6fc;
+            color: #1e293b;
+            min-height: 100vh;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 22px 8%;
+            background: white;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 21px;
+            font-weight: bold;
+            color: #172554;
+        }
+
+        .logo-icon {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white;
+            width: 43px;
+            height: 43px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .nav-label {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 75px 8% 55px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+            background: linear-gradient(120deg, #172554, #312e81, #4c1d95);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.06);
+            right: 5%;
+            top: -130px;
+        }
+
+        .hero-content {
+            max-width: 650px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-tag {
+            display: inline-block;
+            padding: 9px 16px;
+            background: rgba(255,255,255,0.13);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 30px;
+            font-size: 13px;
+            margin-bottom: 22px;
+        }
+
+        .hero h1 {
+            font-size: clamp(32px, 5vw, 52px);
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 span {
+            color: #c4b5fd;
+        }
+
+        .hero p {
+            font-size: 17px;
+            line-height: 1.8;
+            color: #dbeafe;
+            max-width: 580px;
+        }
+
+        .hero-visual {
+            position: relative;
+            z-index: 1;
+            font-size: 110px;
+            padding: 25px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 30px;
+        }
+
+        /* Access Section */
+        .access-section {
+            padding: 60px 8%;
+            text-align: center;
+        }
+
+        .section-heading {
+            font-size: 30px;
+            color: #172554;
+            margin-bottom: 12px;
+        }
+
+        .section-description {
+            color: #64748b;
+            margin-bottom: 38px;
+            font-size: 15px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            max-width: 1150px;
+            margin: auto;
+        }
+
+        .card {
+            background: white;
+            padding: 35px 25px;
+            border-radius: 18px;
+            text-align: left;
+            box-shadow: 0 8px 25px rgba(15,23,42,0.06);
+            border: 1px solid #e8edf5;
+            transition: 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(15,23,42,0.12);
+        }
+
+        .card-icon {
+            width: 58px;
+            height: 58px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 27px;
+            border-radius: 15px;
+            margin-bottom: 22px;
+        }
+
+        .blue {
+            background: #dbeafe;
+        }
+
+        .purple {
+            background: #ede9fe;
+        }
+
+        .orange {
+            background: #ffedd5;
+        }
+
+        .card h3 {
+            font-size: 21px;
+            margin-bottom: 12px;
+            color: #172554;
+        }
+
+        .card p {
+            font-size: 14px;
+            line-height: 1.7;
+            color: #64748b;
+            min-height: 70px;
+            margin-bottom: 23px;
+        }
+
+        .card a {
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            padding: 13px 18px;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .login-btn {
+            background: #2563eb;
+        }
+
+        .login-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .register-btn {
+            background: #7c3aed;
+        }
+
+        .register-btn:hover {
+            background: #6d28d9;
+        }
+
+        .admin-btn {
+            background: #ea580c;
+        }
+
+        .admin-btn:hover {
+            background: #c2410c;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 25px 15px;
+            background: white;
+            color: #64748b;
+            font-size: 13px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 850px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding: 55px 7%;
+            }
+
+            .hero-visual {
+                font-size: 75px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+                max-width: 480px;
+            }
+
+            .card p {
+                min-height: auto;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .navbar {
+                padding: 15px 5%;
+            }
+
+            .logo {
+                font-size: 17px;
+            }
+
+            .nav-label {
+                display: none;
+            }
+
+            .access-section {
+                padding: 45px 6%;
+            }
+
+            .section-heading {
+                font-size: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">
+            <div class="logo-icon">🎓</div>
+            EduNetwork
+        </div>
+
+        <div class="nav-label">
+            College Administration Portal
+        </div>
+    </nav>
+
+    <!-- Welcome Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="welcome-tag">
+                ✦ Welcome to the College Portal
+            </div>
+
+            <h1>
+                Manage Your College<br>
+                <span>Smarter & Better.</span>
+            </h1>
+
+            <p>
+                    A centralized College Management Platform designed to simplify and streamline the management of multiple colleges from a single system. Manage student records, faculty information, admissions, academics, attendance, fees, examinations, and other institutional data efficiently. Get a unified view of all your colleges with secure, organized, and easy-to-access information — all in one place.
+            </p>
+        </div>
+
+        <div class="hero-visual">
+            🏛️
+        </div>
+    </section>
+
+    <!-- Access Cards -->
+    <section class="access-section">
+        <h2 class="section-heading">Get Started</h2>
+
+        <p class="section-description">
+            Choose an option below to access the portal.
+        </p>
+
+        <div class="cards">
+
+            <!-- College Login -->
+            <div class="card">
+                <div class="card-icon blue">🔐</div>
+
+                <h3>College Login</h3>
+
+                <p>
+                    Already registered? Log in to your college
+                    administrator account and manage your college.
+                </p>
+
+                <a href="/login" class="login-btn">
+                    Login to College Portal →
+                </a>
+            </div>
+
+            <!-- College Registration -->
+            <div class="card">
+                <div class="card-icon purple">🏫</div>
+
+                <h3>College Registration</h3>
+
+                <p>
+                    Register your college on the platform and
+                    submit your details for administrator approval.
+                </p>
+
+                <a href="/signup" class="register-btn">
+                    Register Your College →
+                </a>
+            </div>
+
+            <!-- Super Admin Login -->
+            <div class="card">
+                <div class="card-icon orange">⚙️</div>
+
+                <h3>Super Admin Login</h3>
+
+                <p>
+                    Access the platform administration panel to
+                    review registrations and manage colleges.
+                </p>
+
+                <a href="/super-admin/login-page" class="admin-btn">
+                    Go to Super Admin Login →
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        © 2026 College Management System. All Rights Reserved.
+    </footer>
+
+</body>
+</html>

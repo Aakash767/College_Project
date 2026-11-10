@@ -1,0 +1,1054 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Management System</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+        }
+
+        .header {
+            height: 65px;
+            background: #203653;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+        }
+
+        .layout {
+            display: flex;
+            min-height: calc(100vh - 65px);
+        }
+
+        .sidebar {
+            width: 240px;
+            background: #263b55;
+            color: white;
+            padding: 20px 10px;
+            flex-shrink: 0;
+        }
+
+        .sidebar h3 {
+            padding-left: 15px;
+            font-size: 14px;
+            color: #aebed0;
+        }
+
+        .menu-item {
+            display: block;
+            width: 100%;
+            padding: 13px 15px;
+            margin: 4px 0;
+            color: white;
+            background: transparent;
+            border: none;
+            text-align: left;
+            font-size: 15px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background: #405c7d;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            min-width: 0;
+        }
+
+        .content-card {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .content-card h2 {
+            margin-top: 0;
+            color: #203653;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 13px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #f0f3f7;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 6px 0 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 75px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0 18px;
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .action-btn {
+            padding: 9px 14px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            margin: 2px;
+        }
+
+        .primary-btn {
+            background: #203653;
+        }
+
+        .edit-btn {
+            background: #2878b8;
+        }
+
+        .deactivate-btn {
+            background: #d9534f;
+        }
+
+        .activate-btn {
+            background: #27864a;
+        }
+
+        .cancel-btn {
+            background: #777;
+        }
+
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            padding: 9px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .message {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .section-divider {
+            margin: 25px 0;
+            border: none;
+            border-top: 1px solid #ddd;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .status-active {
+            color: green;
+            font-weight: bold;
+        }
+
+        .status-inactive {
+            color: #d9534f;
+            font-weight: bold;
+        }
+
+        @media (max-width: 800px) {
+            .sidebar {
+                width: 180px;
+            }
+
+            .main-content {
+                padding: 12px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h3>College Management System</h3>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+</div>
+
+<div class="layout">
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar">
+
+        <h3>MAIN MENU</h3>
+
+        <button class="menu-item active" onclick="showPage('dashboard', this)">
+            Dashboard
+        </button>
+
+        <button class="menu-item" onclick="showPage('department', this)">
+            Department
+        </button>
+
+        <button class="menu-item" onclick="showPage('courses', this)">
+            Courses
+        </button>
+
+        <button class="menu-item" onclick="showPage('subjects', this)">
+            Subjects
+        </button>
+
+        <button class="menu-item" onclick="showPage('sessions', this)">
+            Academic Sessions
+        </button>
+
+        <button class="menu-item" onclick="showPage('students', this)">
+            Students
+        </button>
+
+        <button class="menu-item" onclick="showPage('teachers', this)">
+            Teachers
+        </button>
+
+        <button class="menu-item" onclick="showPage('admissions', this)">
+            Admissions
+        </button>
+
+        <button class="menu-item" onclick="showPage('fees', this)">
+            Fees
+        </button>
+
+        <button class="menu-item" onclick="showPage('exams', this)">
+            Examinations
+        </button>
+
+        <button class="menu-item" onclick="showPage('results', this)">
+            Results
+        </button>
+
+        <button class="menu-item" onclick="showPage('attendance', this)">
+            Attendance
+        </button>
+
+        <button class="menu-item" onclick="showPage('documents', this)">
+            Documents
+        </button>
+
+        <button class="menu-item" onclick="showPage('settings', this)">
+            Settings
+        </button>
+
+    </aside>
+
+    <!-- RIGHT MAIN CONTENT -->
+    <main class="main-content">
+
+        <div id="mainFrame" class="content-card">
+            <h2>Welcome, {{ full_name }}!</h2>
+            <p>College: {{ college_name }}</p>
+            <p>College ID: {{ college_id }}</p>
+            <p>Select an option from the left menu.</p>
+        </div>
+
+    </main>
+
+</div>
+
+<script>
+
+    // -----------------------------------------
+    // PAGE NAVIGATION
+    // -----------------------------------------
+
+    async function showPage(page, selectedButton) {
+
+        document.querySelectorAll('.menu-item').forEach(button => {
+            button.classList.remove('active');
+        });
+
+        selectedButton.classList.add('active');
+
+        const mainFrame = document.getElementById('mainFrame');
+
+        if (page === 'dashboard') {
+
+            mainFrame.innerHTML = `
+                <h2>Welcome, {{ full_name }}!</h2>
+                <p>College: {{ college_name }}</p>
+                <p>College ID: {{ college_id }}</p>
+                <p>Select an option from the left menu.</p>
+            `;
+
+        } else if (page === 'department') {
+
+            await loadDepartments();
+
+        } else if (page === 'courses') {
+
+            await loadCourses();
+
+        } else {
+
+            mainFrame.innerHTML = `
+                <h2>${page.charAt(0).toUpperCase() + page.slice(1)}</h2>
+                <p>This section will be developed next.</p>
+            `;
+        }
+    }
+
+
+    // -----------------------------------------
+    // DEPARTMENT MANAGEMENT
+    // -----------------------------------------
+
+    async function loadDepartments() {
+
+        const mainFrame = document.getElementById('mainFrame');
+
+        mainFrame.innerHTML = `
+            <h2>Department Management</h2>
+
+            <div style="margin-bottom:25px;">
+                <h3>Add New Department</h3>
+
+                <form id="departmentForm">
+                    <input type="text" id="dept_id"
+                           placeholder="Enter Department ID" required>
+
+                    <input type="text" id="dept_name"
+                           placeholder="Enter Department Name" required>
+
+                    <button class="action-btn primary-btn" type="submit">
+                        Add Department
+                    </button>
+                </form>
+
+                <p id="departmentMessage" class="message"></p>
+            </div>
+
+            <hr class="section-divider">
+
+            <h3>Department List</h3>
+            <div id="departmentTable">Loading departments...</div>
+        `;
+
+        document.getElementById('departmentForm')
+            .addEventListener('submit', addDepartment);
+
+        await refreshDepartmentTable();
+    }
+
+
+    async function refreshDepartmentTable() {
+
+        const table = document.getElementById('departmentTable');
+
+        try {
+
+            const response = await fetch('/college-admin/departments');
+            const result = await response.json();
+
+            if (!response.ok) {
+                table.textContent = result.message || 'Unable to load departments.';
+                return;
+            }
+
+            let rows = '';
+
+            result.departments.forEach(dept => {
+
+                const deptId = escapeHTML(dept.dept_id);
+                const deptName = escapeHTML(dept.dept_name);
+                const status = escapeHTML(dept.dept_status);
+
+                let actionButton = '';
+
+                if (dept.dept_status === 'Active') {
+                    actionButton = `
+                        <button class="action-btn deactivate-btn"
+                            onclick="changeDepartmentStatus('${deptId}', 'Inactive')">
+                            Deactivate
+                        </button>
+                    `;
+                } else {
+                    actionButton = `
+                        <button class="action-btn activate-btn"
+                            onclick="changeDepartmentStatus('${deptId}', 'Active')">
+                            Reactivate
+                        </button>
+                    `;
+                }
+
+                rows += `
+                    <tr>
+                        <td>${deptId}</td>
+                        <td>${deptName}</td>
+                        <td>${status}</td>
+                        <td>${actionButton}</td>
+                    </tr>
+                `;
+            });
+
+            table.innerHTML = `
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Department ID</th>
+                                <th>Department Name</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rows || '<tr><td colspan="4">No departments found.</td></tr>'}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+        } catch (error) {
+            table.textContent = 'Unable to connect to the server.';
+        }
+    }
+
+
+    async function addDepartment(event) {
+
+        event.preventDefault();
+
+        const deptId = document.getElementById('dept_id').value.trim();
+        const deptName = document.getElementById('dept_name').value.trim();
+        const message = document.getElementById('departmentMessage');
+
+        try {
+
+            const response = await fetch('/college-admin/departments/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    dept_id: deptId,
+                    dept_name: deptName
+                })
+            });
+
+            const result = await response.json();
+
+            message.textContent = result.message;
+            message.style.color = response.ok ? 'green' : 'red';
+
+            if (response.ok) {
+                document.getElementById('departmentForm').reset();
+                await refreshDepartmentTable();
+            }
+
+        } catch (error) {
+            message.textContent = 'Unable to connect to the server.';
+            message.style.color = 'red';
+        }
+    }
+
+
+    async function changeDepartmentStatus(deptId, newStatus) {
+
+        const confirmation = confirm(
+            `Are you sure you want to ${newStatus === 'Active' ? 'reactivate' : 'deactivate'} this department?`
+        );
+
+        if (!confirmation) return;
+
+        try {
+
+            const response = await fetch(
+                `/college-admin/departments/${encodeURIComponent(deptId)}/status`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        dept_status: newStatus
+                    })
+                }
+            );
+
+            const result = await response.json();
+
+            alert(result.message);
+
+            if (response.ok) {
+                await refreshDepartmentTable();
+            }
+
+        } catch (error) {
+            alert('Unable to connect to the server.');
+        }
+    }
+
+
+    // -----------------------------------------
+    // COURSE MANAGEMENT
+    // -----------------------------------------
+
+    async function loadCourses() {
+
+        const mainFrame = document.getElementById('mainFrame');
+
+        mainFrame.innerHTML = `
+            <h2>Course Management</h2>
+
+            <h3 id="courseFormHeading">Add New Course</h3>
+
+            <form id="courseForm">
+
+                <div class="form-grid">
+
+                    <div>
+                        <label for="course_dept_id">Department *</label>
+                        <select id="course_dept_id" required>
+                            <option value="">Loading departments...</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="course_name">Course Name *</label>
+                        <input type="text" id="course_name"
+                               placeholder="Example: Bachelor of Social Work" required>
+                    </div>
+
+                    <div>
+                        <label for="course_code">Course Code *</label>
+                        <input type="text" id="course_code"
+                               placeholder="Example: BSW" required>
+                    </div>
+
+                    <div>
+                        <label for="duration_years">Duration in Years *</label>
+                        <input type="number" id="duration_years"
+                               min="1" step="1" placeholder="Example: 3" required>
+                    </div>
+
+                    <div>
+                        <label for="semesters_per_year">Semesters per Year *</label>
+                        <input type="number" id="semesters_per_year"
+                               min="1" step="1" value="2" required>
+                    </div>
+
+                    <div>
+                        <label for="course_level">Course Level</label>
+                        <select id="course_level">
+                            <option value="">Select Level</option>
+                            <option value="Undergraduate">Undergraduate</option>
+                            <option value="Postgraduate">Postgraduate</option>
+                            <option value="Diploma">Diploma</option>
+                            <option value="Certificate">Certificate</option>
+                            <option value="Doctoral">Doctoral</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="course_type">Course Type</label>
+                        <select id="course_type">
+                            <option value="">Select Type</option>
+                            <option value="Regular">Regular</option>
+                            <option value="Professional">Professional</option>
+                            <option value="Vocational">Vocational</option>
+                            <option value="Research">Research</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="course_mode">Course Mode</label>
+                        <select id="course_mode">
+                            <option value="">Select Mode</option>
+                            <option value="Regular">Regular</option>
+                            <option value="Distance">Distance</option>
+                            <option value="Online">Online</option>
+                            <option value="Hybrid">Hybrid</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="course_start_year">Course Start Year</label>
+                        <input type="number" id="course_start_year"
+                               min="1900" max="2100" placeholder="Example: 2026">
+                    </div>
+
+                </div>
+
+                <label for="course_description">Course Description</label>
+                <textarea id="course_description"
+                          placeholder="Enter course description (optional)"></textarea>
+
+                <div class="form-buttons">
+                    <button type="submit" class="action-btn primary-btn"
+                            id="courseSubmitButton">
+                        Add Course
+                    </button>
+
+                    <button type="button" class="action-btn cancel-btn"
+                            id="cancelCourseEditButton"
+                            onclick="cancelCourseEdit()"
+                            style="display:none;">
+                        Cancel Edit
+                    </button>
+                </div>
+
+                <p id="courseMessage" class="message"></p>
+
+            </form>
+
+            <hr class="section-divider">
+
+            <h3>Course List</h3>
+
+            <div id="courseTable">Loading courses...</div>
+        `;
+
+        document.getElementById('courseForm')
+            .addEventListener('submit', saveCourse);
+
+        await loadCourseDepartments();
+        await refreshCourseTable();
+    }
+
+
+    // Load active departments into the course dropdown.
+    async function loadCourseDepartments() {
+
+        const dropdown = document.getElementById('course_dept_id');
+
+        try {
+
+            const response = await fetch('/college-admin/departments');
+            const result = await response.json();
+
+            if (!response.ok) {
+                dropdown.innerHTML = '<option value="">Unable to load departments</option>';
+                return;
+            }
+
+            const activeDepartments = (result.departments || [])
+                .filter(dept => dept.dept_status === 'Active');
+
+            dropdown.innerHTML = '<option value="">Select Department</option>';
+
+            activeDepartments.forEach(dept => {
+
+                const option = document.createElement('option');
+                option.value = dept.dept_id;
+                option.textContent = `${dept.dept_name} (${dept.dept_id})`;
+
+                dropdown.appendChild(option);
+            });
+
+            if (activeDepartments.length === 0) {
+                dropdown.innerHTML = '<option value="">No active departments available</option>';
+            }
+
+        } catch (error) {
+            dropdown.innerHTML = '<option value="">Unable to connect to server</option>';
+        }
+    }
+
+
+    // Add a new course or update an existing course.
+    async function saveCourse(event) {
+
+        event.preventDefault();
+
+        const message = document.getElementById('courseMessage');
+
+        const deptId = document.getElementById('course_dept_id').value;
+        const courseName = document.getElementById('course_name').value.trim();
+        const courseCode = document.getElementById('course_code').value.trim();
+        const durationYears = Number(document.getElementById('duration_years').value);
+        const semestersPerYear = Number(document.getElementById('semesters_per_year').value);
+
+        if (!deptId || !courseName || !courseCode ||
+            durationYears < 1 || semestersPerYear < 1) {
+
+            message.textContent = 'Please fill in all required fields correctly.';
+            message.style.color = 'red';
+            return;
+        }
+
+        const courseData = {
+            dept_id: deptId,
+            course_name: courseName,
+            course_code: courseCode,
+            duration_years: durationYears,
+            semesters_per_year: semestersPerYear,
+            course_level: document.getElementById('course_level').value || null,
+            course_type: document.getElementById('course_type').value || null,
+            course_mode: document.getElementById('course_mode').value || null,
+            course_description: document.getElementById('course_description').value.trim() || null,
+            course_start_year: document.getElementById('course_start_year').value
+                ? Number(document.getElementById('course_start_year').value)
+                : null
+        };
+
+        const editingCourseId = document.getElementById('courseForm').dataset.courseId;
+        const editingDeptId = document.getElementById('courseForm').dataset.deptId;
+
+        let url = '/courses';
+        let method = 'POST';
+
+        if (editingCourseId) {
+            url = `/departments/${encodeURIComponent(editingDeptId)}/courses/${encodeURIComponent(editingCourseId)}`;
+            method = 'PUT';
+        }
+
+        try {
+
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(courseData)
+            });
+
+            const result = await response.json();
+
+            message.textContent = result.message || (
+                response.ok ? 'Course saved successfully.' : 'Unable to save course.'
+            );
+
+            message.style.color = response.ok ? 'green' : 'red';
+
+            if (response.ok) {
+
+                document.getElementById('courseForm').reset();
+                document.getElementById('semesters_per_year').value = 2;
+
+                delete document.getElementById('courseForm').dataset.courseId;
+                delete document.getElementById('courseForm').dataset.deptId;
+
+                document.getElementById('courseFormHeading').textContent = 'Add New Course';
+                document.getElementById('courseSubmitButton').textContent = 'Add Course';
+                document.getElementById('cancelCourseEditButton').style.display = 'none';
+                document.getElementById('course_dept_id').disabled = false;
+
+                await refreshCourseTable();
+            }
+
+        } catch (error) {
+            message.textContent = 'Unable to connect to the server.';
+            message.style.color = 'red';
+        }
+    }
+
+
+    // Display courses in a table.
+    async function refreshCourseTable() {
+
+        const table = document.getElementById('courseTable');
+
+        try {
+
+            const response = await fetch('/courses');
+            const result = await response.json();
+
+            if (!response.ok) {
+                table.textContent = result.message || 'Unable to load courses.';
+                return;
+            }
+
+            let rows = '';
+
+            (result.courses || []).forEach(course => {
+
+                const deptId = escapeHTML(course.dept_id);
+                const courseId = escapeHTML(course.course_id);
+                const courseName = escapeHTML(course.course_name);
+                const courseCode = escapeHTML(course.course_code);
+                const deptName = escapeHTML(course.dept_name);
+                const duration = escapeHTML(course.duration_years);
+                const semesters = escapeHTML(course.semesters_per_year);
+                const status = escapeHTML(course.course_status);
+
+                let statusButton = '';
+
+                if (course.course_status === 'Active') {
+
+                    statusButton = `
+                        <button class="action-btn deactivate-btn"
+                            onclick="changeCourseStatus('${deptId}', '${courseId}', 'Inactive')">
+                            Deactivate
+                        </button>
+                    `;
+
+                } else {
+
+                    statusButton = `
+                        <button class="action-btn activate-btn"
+                            onclick="changeCourseStatus('${deptId}', '${courseId}', 'Active')">
+                            Reactivate
+                        </button>
+                    `;
+                }
+
+                rows += `
+                    <tr>
+                        <td>${courseId}</td>
+                        <td>${courseName}</td>
+                        <td>${courseCode}</td>
+                        <td>${deptName}</td>
+                        <td>${duration}</td>
+                        <td>${semesters}</td>
+                        <td>${status}</td>
+                        <td>
+                            <button class="action-btn edit-btn"
+                                onclick="editCourse('${deptId}', '${courseId}')">
+                                Edit
+                            </button>
+
+                            ${statusButton}
+                        </td>
+                    </tr>
+                `;
+            });
+
+            table.innerHTML = `
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Course ID</th>
+                                <th>Course Name</th>
+                                <th>Course Code</th>
+                                <th>Department</th>
+                                <th>Duration</th>
+                                <th>Semesters / Year</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            ${rows || '<tr><td colspan="8">No courses found.</td></tr>'}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+        } catch (error) {
+            table.textContent = 'Unable to connect to the server.';
+        }
+    }
+
+
+    // Load a course's existing information into the form.
+    async function editCourse(deptId, courseId) {
+
+        try {
+
+            const response = await fetch(
+                `/departments/${encodeURIComponent(deptId)}/courses/${encodeURIComponent(courseId)}`
+            );
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                alert(result.message || 'Unable to load course details.');
+                return;
+            }
+
+            const course = result.course || result;
+
+            const form = document.getElementById('courseForm');
+
+            form.dataset.courseId = courseId;
+            form.dataset.deptId = deptId;
+
+            document.getElementById('course_dept_id').value = deptId;
+            document.getElementById('course_dept_id').disabled = true;
+
+            document.getElementById('course_name').value = course.course_name || '';
+            document.getElementById('course_code').value = course.course_code || '';
+            document.getElementById('duration_years').value = course.duration_years || '';
+            document.getElementById('semesters_per_year').value = course.semesters_per_year || 2;
+            document.getElementById('course_level').value = course.course_level || '';
+            document.getElementById('course_type').value = course.course_type || '';
+            document.getElementById('course_mode').value = course.course_mode || '';
+            document.getElementById('course_description').value = course.course_description || '';
+            document.getElementById('course_start_year').value = course.course_start_year || '';
+
+            document.getElementById('courseFormHeading').textContent = 'Edit Course';
+            document.getElementById('courseSubmitButton').textContent = 'Update Course';
+            document.getElementById('cancelCourseEditButton').style.display = 'inline-block';
+
+            document.getElementById('courseMessage').textContent = '';
+
+            document.getElementById('courseFormHeading').scrollIntoView({
+                behavior: 'smooth'
+            });
+
+        } catch (error) {
+            alert('Unable to connect to the server.');
+        }
+    }
+
+
+    // Cancel editing and return to the Add Course form.
+    function cancelCourseEdit() {
+
+        const form = document.getElementById('courseForm');
+
+        form.reset();
+
+        delete form.dataset.courseId;
+        delete form.dataset.deptId;
+
+        document.getElementById('course_dept_id').disabled = false;
+        document.getElementById('semesters_per_year').value = 2;
+
+        document.getElementById('courseFormHeading').textContent = 'Add New Course';
+        document.getElementById('courseSubmitButton').textContent = 'Add Course';
+        document.getElementById('cancelCourseEditButton').style.display = 'none';
+        document.getElementById('courseMessage').textContent = '';
+    }
+
+
+    // Deactivate or reactivate a course.
+    async function changeCourseStatus(deptId, courseId, newStatus) {
+
+        const action = newStatus === 'Inactive' ? 'deactivate' : 'reactivate';
+
+        const confirmation = confirm(
+            `Are you sure you want to ${action} this course?`
+        );
+
+        if (!confirmation) return;
+
+        try {
+
+            const response = await fetch(
+                `/departments/${encodeURIComponent(deptId)}/courses/${encodeURIComponent(courseId)}/status`,
+                {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        course_status: newStatus
+                    })
+                }
+            );
+
+            const result = await response.json();
+
+            alert(result.message || 'Course status updated.');
+
+            if (response.ok) {
+                await refreshCourseTable();
+            }
+
+        } catch (error) {
+            alert('Unable to connect to the server.');
+        }
+    }
+
+
+    // -----------------------------------------
+    // COMMON FUNCTION
+    // -----------------------------------------
+
+    function escapeHTML(value) {
+
+        return String(value ?? '').replace(/[&<>"']/g, function(character) {
+            return {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[character];
+        });
+    }
+
+
+    // -----------------------------------------
+    // LOGOUT
+    // -----------------------------------------
+
+    async function logout() {
+
+        try {
+
+            const response = await fetch('/college-admin/logout', {
+                method: 'POST'
+            });
+
+            if (response.ok) {
+                window.location.href = '/login';
+            } else {
+                alert('Logout failed.');
+            }
+
+        } catch (error) {
+            alert('Unable to connect to the server.');
+        }
+    }
+
+</script>
+
+</body>
+</html>

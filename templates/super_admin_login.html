@@ -1,0 +1,165 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin Login</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .login-container {
+            background: white;
+            width: 350px;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px #00000015;
+        }
+
+        h1 {
+            text-align: center;
+            color: #243b64;
+        }
+
+        label {
+            display: block;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 7px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 25px;
+            background: #243b64;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #172b4d;
+        }
+
+        #message {
+            margin-top: 15px;
+            text-align: center;
+            display: none;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .success {
+            color: green;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="login-container">
+
+    <h1>Super Admin Login</h1>
+
+    <form id="loginForm">
+
+        <label>Username</label>
+        <input type="text" name="username" required>
+
+        <label>Password</label>
+        <input type="password" name="password" required>
+
+        <button type="submit" id="loginButton">
+            Login
+        </button>
+
+    </form>
+
+    <div id="message"></div>
+
+</div>
+
+<script>
+    const loginForm = document.getElementById("loginForm");
+    const messageBox = document.getElementById("message");
+    const loginButton = document.getElementById("loginButton");
+
+    loginForm.addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        const formData = new FormData(loginForm);
+        const data = Object.fromEntries(formData.entries());
+
+        loginButton.disabled = true;
+        loginButton.textContent = "Logging in...";
+
+        try {
+
+            const response = await fetch("/super-admin/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            messageBox.style.display = "block";
+
+            if (response.ok) {
+
+                messageBox.className = "success";
+                messageBox.textContent = result.message;
+
+                // Open dashboard after successful login
+                window.location.href = "/super-admin/dashboard";
+
+            } else {
+
+                messageBox.className = "error";
+                messageBox.textContent =
+                    result.message || result.error || "Login failed.";
+
+            }
+
+        } catch (error) {
+
+            messageBox.style.display = "block";
+            messageBox.className = "error";
+            messageBox.textContent =
+                "Unable to connect to the server.";
+
+        }
+
+        loginButton.disabled = false;
+        loginButton.textContent = "Login";
+
+    });
+</script>
+
+</body>
+</html>
